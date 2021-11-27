@@ -1,9 +1,8 @@
-# Courses
+# JavaScript Funcional e Reativo - PENSE como um Desenvolvedor JavaScript
 
 <br>
 
-## 💡 Idea:
-In this repository will be saved all the code from courses I make. ✨
+## Course from Cod3r
 
 <br>
 
