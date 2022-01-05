@@ -82,6 +82,18 @@ function ordernarAtributoNumerico(attr, ordem = 'ascendente') {
     }
 }
 
+function composicao(...funcoes) {
+    return function(textoInicial) {
+        return funcoes.reduce(async (acc, fn) => {
+            if(Promise.resolve(acc) === acc) {
+                return fn(await acc);
+            } else {
+                return fn(acc);
+            }
+        }, textoInicial);
+    }
+}
+
 module.exports = {
     lerDiretorio,
     filtrarElementosTerminadosCom,
@@ -92,5 +104,6 @@ module.exports = {
     removerSimbolos,
     mesclarElementos,
     separarTextoPor,
-    ordernarAtributoNumerico
+    ordernarAtributoNumerico,
+    composicao
 }
