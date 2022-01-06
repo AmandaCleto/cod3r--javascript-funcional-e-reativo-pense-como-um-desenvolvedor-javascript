@@ -1,7 +1,7 @@
 const path = require("path");
-const fn = require("./funcoes_curso_implicito");
+const fn = require("./implicity_functions");
 
-const caminho = path.join(__dirname, "../", "/dados");
+const caminho = path.join(__dirname, "../", "/data");
 const simbolos = [
     '.', '?', '-', ',', '"', '♪', '_', '<i>', '</i>',
     '\r', '[', ']', '(', ')',

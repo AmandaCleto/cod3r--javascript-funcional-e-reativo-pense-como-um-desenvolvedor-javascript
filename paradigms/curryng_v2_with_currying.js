@@ -1,5 +1,4 @@
 //é possivel agora criar versoes intermediarias das funções
-
 function textoComTamanhoEntre(min) {
     return function(max) {
         return function(erro) {
