@@ -1,9 +1,9 @@
-# Courses
+# COD3R - JavaScript Funcional e Reativo - PENSE como um Desenvolvedor JavaScript
 
 <br>
 
 ## 💡 Idea:
-In this repository will be saved all the code from courses I make. ✨
+This repository is meant to save all the code I may write about this course. ✨
 
 <br>
 
