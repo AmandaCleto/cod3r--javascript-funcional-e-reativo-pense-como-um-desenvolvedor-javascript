@@ -15,11 +15,29 @@ function lerDiretorio(caminho) {
     });
 }
 
-function filtrarElementosTerminadosCom(sufixo) {
-    return function (array) {
-        return array.filter((element) => element.endsWith(sufixo));
+function createPipeableOperator(operatorFn) {
+    return function (source) {
+        return new Observable((subscriber) => {
+            const sub = operatorFn(subscriber);
+            source.subscribe({
+                next: sub.next,
+                error: sub.error || ((e) => subscriber.error(e)),
+                complete: sub.complete,
+            });
+        });
     };
 }
+
+function filtrarElementosTerminadosCom(sufixo) {
+    return createPipeableOperator((subscriber) => ({
+        next(texto) {
+            if (texto.endsWith(sufixo)) {
+                subscriber.next(texto);
+            }
+        },
+    }));
+}
+
 
 function lerArquivos(caminhos) {
     return Promise.all(caminhos.map((caminho) => lerArquivo(caminho)));

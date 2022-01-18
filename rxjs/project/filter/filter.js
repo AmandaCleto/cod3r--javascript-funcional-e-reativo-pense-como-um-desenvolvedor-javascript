@@ -1,5 +1,5 @@
 const path = require("path");
-const fn = require("./implicity_functions");
+const fn = require("./functions");
 
 const caminho = path.join(__dirname, "../", "/data");
 const simbolos = [
@@ -22,7 +22,7 @@ function agruparPalavras(palavras) {
 
 fn.lerDiretorio(caminho)
     .pipe(
-
+        fn.filtrarElementosTerminadosCom(".srt"),
     )
     .subscribe(console.log)
 
