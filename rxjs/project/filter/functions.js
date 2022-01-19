@@ -15,19 +15,6 @@ function lerDiretorio(caminho) {
     });
 }
 
-function createPipeableOperator(operatorFn) {
-    return function (source) {
-        return new Observable((subscriber) => {
-            const sub = operatorFn(subscriber);
-            source.subscribe({
-                next: sub.next,
-                error: sub.error || ((e) => subscriber.error(e)),
-                complete: sub.complete,
-            });
-        });
-    };
-}
-
 function filtrarElementosTerminadosCom(sufixo) {
     return createPipeableOperator((subscriber) => ({
         next(texto) {
@@ -38,77 +25,101 @@ function filtrarElementosTerminadosCom(sufixo) {
     }));
 }
 
-
-function lerArquivos(caminhos) {
-    return Promise.all(caminhos.map((caminho) => lerArquivo(caminho)));
-}
-
-function lerArquivo(caminho) {
-    return new Promise((resolve, reject) => {
-        try {
-            const conteudo = fs.readFileSync(caminho, { encoding: "utf-8" });
-            resolve(conteudo.toString());
-        } catch (error) {
-            reject(error);
-        }
-    });
-}
-
-function removerSeVazio(array) {
-    return array.filter((linha) => linha.trim());
-}
-
-function removerSeIncluir(padraoTextual) {
-    return function (array) {
-        return array.filter((linha) => !linha.includes(padraoTextual));
-    };
-}
-
-function removerSeApenasNumero(array) {
-    return array.filter((linha) => {
-        const number = parseInt(linha.trim());
-        return number !== number;
-    });
-}
-
-function removerSimbolos(simbolos) {
-    return function (array) {
-        return array.map((elemento) => {
-            return simbolos.reduce((acc, simbolo) => {
-                return acc.split(simbolo).join("");
-            }, elemento);
-        });
-    };
-}
-
-function mesclarElementos(array) {
-    return array.join(" ");
+function lerArquivo() {
+    return createPipeableOperator((subscriber) => ({
+        next(caminho) {
+            try {
+                const conteudo = fs.readFileSync(caminho, {
+                    encoding: "utf-8",
+                });
+                subscriber.next(conteudo.toString());
+            } catch (error) {
+                subscriber.error(error);
+            }
+        },
+    }));
 }
 
 function separarTextoPor(simbolo) {
-    return function (texto) {
-        return texto.split(simbolo);
-    };
+    return createPipeableOperator((subscriber) => ({
+        next(texto) {
+            texto.split(simbolo).forEach((parte) => {
+                subscriber.next(parte);
+            });
+        },
+    }));
 }
 
-function ordernarAtributoNumerico(attr, ordem = "ascendente") {
-    return function (array) {
-        const ascendente = (valor1, valor2) => valor1[attr] - valor2[attr];
-        const descendente = (valor1, valor2) => valor2[attr] - valor1[attr];
+function removerSeVazio() {
+    return createPipeableOperator((subscriber) => ({
+        next(texto) {
+            if (texto.trim()) {
+                subscriber.next(texto);
+            }
+        },
+    }));
+}
 
-        return array.sort(ordem === "ascendente" ? ascendente : descendente);
+function removerSeApenasNumero() {
+    return createPipeableOperator((subscriber) => ({
+        next(texto) {
+            const number = parseInt(texto.trim());
+            if (number !== number) {
+                subscriber.next(texto);
+            }
+        },
+    }));
+}
+
+function removerSimbolos(simbolos) {
+    return createPipeableOperator((subscriber) => ({
+        next(texto) {
+            const textoSemSimbolos = simbolos.reduce((acc, simbolo) => {
+                return acc.split(simbolo).join("");
+            }, texto);
+            subscriber.next(textoSemSimbolos);
+        },
+    }));
+}
+
+function agruparPalavras() {
+    return createPipeableOperator((subscriber) => ({
+        next(palavras) {
+            const agrupado= Object.values(palavras.reduce((acc, palavra) => {
+                const palavraMinuscula = palavra.toLowerCase();
+                const quantidade = acc[palavraMinuscula] ? acc[palavraMinuscula].quantidade + 1: 1;
+                acc[palavraMinuscula] = {
+                    palavra: palavraMinuscula,
+                    quantidade,
+                }
+
+                return acc;
+            }, {}));
+            subscriber.next(agrupado);
+        },
+    }));
+}
+
+function createPipeableOperator(operatorFn) {
+    return function (source) {
+        return new Observable((subscriber) => {
+            const sub = operatorFn(subscriber);
+            source.subscribe({
+                next: sub.next,
+                error: sub.error || ((e) => subscriber.error(e)),
+                complete: sub.complete || ((e) => subscriber.complete(e)),
+            });
+        });
     };
 }
 
 module.exports = {
     lerDiretorio,
     filtrarElementosTerminadosCom,
-    lerArquivos,
+    lerArquivo,
     removerSeVazio,
-    removerSeIncluir,
     removerSeApenasNumero,
     removerSimbolos,
-    mesclarElementos,
     separarTextoPor,
-    ordernarAtributoNumerico,
+    agruparPalavras,
 };
