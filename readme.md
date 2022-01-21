@@ -2,12 +2,17 @@
 
 <br>
 
+[![Javascript](https://amandacleto.github.io/images-for-projects/public/images/github-readme/icon-js.svg)](https://www.javascript.com/)
+[![Rxjs](https://amandacleto.github.io/images-for-projects/public/images/github-readme/icon-rxjs.svg)](https://rxjs.dev/)
+
+<br>
+
 ## 💡 Idea:
 This repository is meant to save all the code I may write about this course. ✨
 
 <br>
 
-## Content:
+## 📚 Content:
 
 - O básico sobre Funções
 - Funções Callback
